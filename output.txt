@@ -1,0 +1,391 @@
+Running db_bot.py!
+C:\Users\Johnathan\Desktop\cs\452\aisql_submit\clashroyale_aisql\config.json
+Which are the most popular Archetypes?
+SELECT Archetype.arch_name, COUNT(PlayerDeck.deck_id) AS Popularity
+FROM Archetype
+INNER JOIN Deck ON Archetype.arch_id = Deck.arch_id
+INNER JOIN PlayerDeck ON Deck.deck_id = PlayerDeck.deck_id
+GROUP BY Archetype.arch_name
+ORDER BY Popularity DESC;
+[('Splashyard', 4), ('Hog Cycle', 4), ('Log Bait', 3), ('LavaLoon', 3)]
+The most popular archetypes are Splashyard and Hog Cycle, closely followed by Log Bait and LavaLoon.
+Which players have multiple decks?
+SELECT player_name
+FROM Player
+WHERE player_id IN (
+    SELECT player_id 
+    FROM PlayerDeck 
+    GROUP BY player_id 
+    HAVING COUNT(DISTINCT deck_id) > 1
+)
+[('AliceWonder',), ('BobTheGreat',), ('DanaDragon',), ('FrankFireball',)]
+The players who have multiple decks are AliceWonder, BobTheGreat, DanaDragon, and FrankFireball.
+Which cards are used in the most decks?
+SELECT card_id, COUNT(deck_id) as usage_count 
+FROM DeckCard 
+GROUP BY card_id 
+ORDER BY usage_count DESC;
+[(13, 2), (10, 2), (53, 1), (52, 1), (51, 1), (50, 1), (49, 1), (47, 1), (30, 1), (29, 1), (28, 1), (27, 1), (22, 1), (21, 1), (20, 1), (19, 1), (18, 1), (17, 1), (16, 1), (15, 1), (14, 1), (11, 1), (9, 1), (8, 1), (7, 1), (6, 1), (4, 1), (3, 1), (2, 1), (1, 1)]
+The cards used most in decks are cards number 13 and 10, both used in 2 decks each.
+Which players have a deck that contains a Hog Rider?
+SELECT Player.player_name 
+FROM Player 
+JOIN PlayerDeck ON Player.player_id = PlayerDeck.player_id 
+JOIN DeckCard ON PlayerDeck.deck_id = DeckCard.deck_id 
+JOIN Card ON DeckCard.card_id = Card.card_id 
+WHERE Card.card_name = 'Hog Rider';
+[('AliceWonder',), ('BobTheGreat',), ('EveElite',), ('FrankFireball',)]
+The players that have a deck that contains a Hog Rider are AliceWonder, BobTheGreat, EveElite, and FrankFireball.
+Which Archetypes use the Balloon card?
+SELECT Archetype.arch_name 
+FROM Archetype
+JOIN Deck ON Archetype.arch_id = Deck.arch_id
+JOIN DeckCard ON Deck.deck_id = DeckCard.deck_id
+JOIN Card ON DeckCard.card_id = Card.card_id
+WHERE Card.card_name = 'Balloon'
+[('LavaLoon',)]
+The archetype that uses the Balloon card is LavaLoon.
+What are the namesof the players who use Log Bait decks?
+SELECT Player.player_name
+FROM Player 
+JOIN PlayerDeck ON Player.player_id = PlayerDeck.player_id
+JOIN Deck ON PlayerDeck.deck_id = Deck.deck_id
+JOIN Archetype ON Deck.arch_id = Archetype.arch_id
+WHERE Archetype.arch_name = "Log Bait";
+[('BobTheGreat',), ('DanaDragon',), ('FrankFireball',)]
+The players who use Log Bait decks are BobTheGreat, DanaDragon, and FrankFireball.
+Which players have decks with a Lava Hound?
+SELECT Player.player_name
+FROM Player
+JOIN PlayerDeck ON Player.player_id = PlayerDeck.player_id
+JOIN DeckCard ON PlayerDeck.deck_id = DeckCard.deck_id
+JOIN Card ON DeckCard.card_id = Card.card_id
+WHERE Card.card_name = 'Lava Hound'
+[('AliceWonder',), ('CharlieClash',), ('FrankFireball',)]
+The players who have decks with a Lava Hound are AliceWonder, CharlieClash, and FrankFireball.
+Who has a deck with a card that costs more than 6 elixir?
+SELECT Player.player_name 
+FROM Player 
+JOIN PlayerDeck ON Player.player_id = PlayerDeck.player_id 
+JOIN DeckCard ON PlayerDeck.deck_id = DeckCard.deck_id 
+JOIN Card ON DeckCard.card_id = Card.card_id 
+WHERE Card.card_cost > 6;
+[('AliceWonder',), ('CharlieClash',), ('FrankFireball',)]
+The players who have a deck with a card that costs more than 6 elixir are AliceWonder, CharlieClash, and FrankFireball.
+What cards are used in the highest number of decks in the database?
+SELECT card_id, COUNT(deck_id) AS deck_count 
+FROM DeckCard 
+GROUP BY card_id 
+ORDER BY deck_count DESC LIMIT 1;
+[(13, 2)]
+The card numbered 13 is used in 2 decks, according to the database.
+Which players have a deck with a Rocket card?
+SELECT Player.player_name
+FROM Player
+JOIN PlayerDeck ON Player.player_id = PlayerDeck.player_id
+JOIN DeckCard ON PlayerDeck.deck_id = DeckCard.deck_id
+JOIN Card ON DeckCard.card_id = Card.card_id
+WHERE Card.card_name = 'Rocket'
+[('BobTheGreat',), ('DanaDragon',), ('FrankFireball',)]
+The players who have a deck with a Rocket card are BobTheGreat, DanaDragon, and FrankFireball.
+What is the most commonly used card type across all decks?
+SELECT card_type, COUNT(*) as count
+FROM DeckCard
+JOIN Card ON DeckCard.card_id = Card.card_id
+GROUP BY card_type
+ORDER BY count DESC
+LIMIT 1;
+[('Troop', 19)]
+The most commonly used card type across all decks is 'Troop'.
+Which are the most popular Archetypes?
+SELECT a.arch_name, COUNT(*) as count 
+FROM Archetype a
+JOIN Deck d ON a.arch_id = d.arch_id
+GROUP BY a.arch_name
+ORDER BY COUNT(*) DESC;
+[('Splashyard', 1), ('Log Bait', 1), ('LavaLoon', 1), ('Hog Cycle', 1)]
+The most popular archetypes are Splashyard, Log Bait, LavaLoon, and Hog Cycle.
+Which players have multiple decks?
+SELECT p.player_name
+FROM Player p
+JOIN PlayerDeck pd ON p.player_id = pd.player_id
+GROUP BY p.player_id
+HAVING COUNT(pd.deck_id) > 1;
+[('AliceWonder',), ('BobTheGreat',), ('DanaDragon',), ('FrankFireball',)]
+The players who have multiple decks are AliceWonder, BobTheGreat, DanaDragon, and FrankFireball.
+Which cards are used in the most decks?
+SELECT c.card_name
+FROM Card c
+JOIN DeckCard dc ON c.card_id = dc.card_id
+GROUP BY c.card_id
+ORDER BY COUNT(dc.deck_id) DESC;
+[('Log',), ('Ice Spirit',), ('Barbarian Barrel',), ('Skeleton King',), ('Bowler',), ('Tornado',), ('Ice Wizard',), ('Graveyard',), ('Zap',), ('Valkyrie',), ('Guards',), ('Inferno Dragon',), ('Knight',), ('Goblin Gang',), ('Rocket',), ('Inferno Tower',), ('Princess',), ('Goblin Barrel',), ('Ice Golem',), ('Musketeer',), ('Skeletons',), ('Cannon',), ('Hog Rider',), ('Skeleton Dragons',), ('Fireball',), ('Arrows',), ('Tombstone',), ('Baby Dragon',), ('Balloon',), ('Lava Hound',)]
+The most commonly used cards in decks are Log, Ice Spirit, Barbarian Barrel, Skeleton King, Bowler, Tornado, Ice Wizard, Graveyard, Zap, and Valkyrie to name a few.
+Which players have a deck that contains a Hog Rider?
+SELECT p.player_name
+FROM Player p
+JOIN PlayerDeck pd ON p.player_id = pd.player_id
+JOIN DeckCard dc ON pd.deck_id = dc.deck_id
+JOIN Card c ON dc.card_id = c.card_id
+WHERE c.card_name = 'Hog Rider';
+[('AliceWonder',), ('BobTheGreat',), ('EveElite',), ('FrankFireball',)]
+The players who have a deck that contains a Hog Rider are AliceWonder, BobTheGreat, EveElite, and FrankFireball.
+Which Archetypes use the Balloon card?
+SELECT a.arch_name
+FROM Archetype a
+JOIN Deck d ON a.arch_id = d.arch_id
+JOIN DeckCard dc ON d.deck_id = dc.deck_id
+JOIN Card c ON dc.card_id = c.card_id
+WHERE c.card_name = 'Balloon';
+[('LavaLoon',)]
+The "LavaLoon" archetype uses the Balloon card.
+What are the namesof the players who use Log Bait decks?
+SELECT p.player_name
+FROM Player p
+JOIN PlayerDeck pd ON p.player_id = pd.player_id
+JOIN Deck d ON pd.deck_id = d.deck_id
+JOIN Archetype a ON d.arch_id = a.arch_id
+WHERE a.arch_name = 'Log Bait';
+[('BobTheGreat',), ('DanaDragon',), ('FrankFireball',)]
+The players who use Log Bait decks are BobTheGreat, DanaDragon, and FrankFireball.
+Which players have decks with a Lava Hound?
+SELECT p.player_name
+FROM Player p
+JOIN PlayerDeck pd ON p.player_id = pd.player_id
+JOIN DeckCard dc ON pd.deck_id = dc.deck_id
+JOIN Card c ON dc.card_id = c.card_id
+WHERE c.card_name = 'Lava Hound';
+[('AliceWonder',), ('CharlieClash',), ('FrankFireball',)]
+The players who have decks with a Lava Hound are AliceWonder, CharlieClash, and FrankFireball.
+Who has a deck with a card that costs more than 6 elixir?
+SELECT p.player_name
+FROM Player p
+JOIN PlayerDeck pd ON p.player_id = pd.player_id
+JOIN DeckCard dc ON pd.deck_id = dc.deck_id
+JOIN Card c ON dc.card_id = c.card_id
+WHERE c.card_cost > 6;
+[('AliceWonder',), ('CharlieClash',), ('FrankFireball',)]
+AliceWonder, CharlieClash, and FrankFireball have a deck with a card that costs more than 6 elixir.
+What cards are used in the highest number of decks in the database?
+SELECT c.card_name
+FROM Card c
+JOIN DeckCard dc ON c.card_id = dc.card_id
+GROUP BY c.card_id
+ORDER BY COUNT(dc.deck_id) DESC
+LIMIT 1;
+[('Log',)]
+The card used in the highest number of decks in the database is the "Log".
+Which players have a deck with a Rocket card?
+SELECT p.player_name
+FROM Player p
+JOIN PlayerDeck pd ON p.player_id = pd.player_id
+JOIN DeckCard dc ON pd.deck_id = dc.deck_id
+JOIN Card c ON dc.card_id = c.card_id
+WHERE c.card_name = 'Rocket';
+[('BobTheGreat',), ('DanaDragon',), ('FrankFireball',)]
+The players who have a deck with a Rocket card are BobTheGreat, DanaDragon, and FrankFireball.
+What is the most commonly used card type across all decks?
+SELECT card_type
+FROM Card c
+JOIN DeckCard dc ON c.card_id = dc.card_id
+GROUP BY card_type
+ORDER BY COUNT(*) DESC
+LIMIT 1;
+[('Troop',)]
+The most commonly used card type across all decks is "Troop".
+Which are the most popular Archetypes?
+SELECT arch_name, COUNT(*) as usage
+FROM Archetype a
+JOIN Deck d ON a.arch_id = d.arch_id
+JOIN PlayerDeck pd ON d.deck_id = pd.deck_id
+GROUP BY a.arch_name
+ORDER BY usage DESC;
+[('Splashyard', 4), ('Hog Cycle', 4), ('Log Bait', 3), ('LavaLoon', 3)]
+The most popular archetypes are Splashyard and Hog Cycle, both equally popular, followed by Log Bait and LavaLoon.
+Which players have multiple decks?
+SELECT p.player_name
+FROM Player p
+JOIN PlayerDeck pd ON p.player_id = pd.player_id
+GROUP BY p.player_name
+HAVING COUNT(DISTINCT pd.deck_id) > 1;
+[('AliceWonder',), ('BobTheGreat',), ('DanaDragon',), ('FrankFireball',)]
+The players who have multiple decks are AliceWonder, BobTheGreat, DanaDragon, and FrankFireball.
+Which cards are used in the most decks?
+SELECT c.card_name
+FROM Card c
+JOIN DeckCard dc ON c.card_id = dc.card_id
+GROUP BY c.card_name
+ORDER BY COUNT(dc.deck_id) DESC
+LIMIT 1;
+[('Log',)]
+The card used in the most decks is the Log.
+Which players have a deck that contains a Hog Rider?
+SELECT DISTINCT p.player_name
+FROM Player p
+JOIN PlayerDeck pd ON p.player_id = pd.player_id
+JOIN DeckCard dc ON pd.deck_id = dc.deck_id
+JOIN Card c ON dc.card_id = c.card_id
+WHERE c.card_name = 'Hog Rider';
+[('AliceWonder',), ('BobTheGreat',), ('EveElite',), ('FrankFireball',)]
+AliceWonder, BobTheGreat, EveElite, and FrankFireball.
+Which Archetypes use the Balloon card?
+SELECT DISTINCT a.arch_name
+FROM Archetype a
+JOIN Deck d ON a.arch_id = d.arch_id
+JOIN DeckCard dc ON d.deck_id = dc.deck_id
+JOIN Card c ON dc.card_id = c.card_id
+WHERE c.card_name = 'Balloon';
+[('LavaLoon',)]
+The Archetype that uses the Balloon card is LavaLoon.
+What are the namesof the players who use Log Bait decks?
+SELECT p.player_name
+FROM Player p
+JOIN PlayerDeck pd ON p.player_id = pd.player_id
+JOIN Deck d ON pd.deck_id = d.deck_id
+JOIN Archetype a ON d.arch_id = a.arch_id
+WHERE a.arch_name = 'Log Bait';
+[('BobTheGreat',), ('DanaDragon',), ('FrankFireball',)]
+The players who use Log Bait decks are BobTheGreat, DanaDragon, and FrankFireball.
+Which players have decks with a Lava Hound?
+SELECT DISTINCT p.player_name
+FROM Player p
+JOIN PlayerDeck pd ON p.player_id = pd.player_id
+JOIN DeckCard dc ON pd.deck_id = dc.deck_id
+JOIN Card c ON dc.card_id = c.card_id
+WHERE c.card_name = 'Lava Hound';
+[('AliceWonder',), ('CharlieClash',), ('FrankFireball',)]
+The players who have decks with a Lava Hound are AliceWonder, CharlieClash, and FrankFireball.
+Who has a deck with a card that costs more than 6 elixir?
+SELECT DISTINCT p.player_name
+FROM Player p
+JOIN PlayerDeck pd ON p.player_id = pd.player_id
+JOIN DeckCard dc ON pd.deck_id = dc.deck_id
+JOIN Card c ON dc.card_id = c.card_id
+WHERE c.card_cost > 6;
+[('AliceWonder',), ('CharlieClash',), ('FrankFireball',)]
+The players who have a deck with a card that costs more than 6 elixir are AliceWonder, CharlieClash, and FrankFireball.
+What cards are used in the highest number of decks in the database?
+SELECT c.card_name
+FROM Card c
+JOIN DeckCard dc ON c.card_id = dc.card_id
+GROUP BY c.card_id
+ORDER BY COUNT(dc.deck_id) DESC
+LIMIT 1;
+[('Log',)]
+The card that is used in the highest number of decks in the database is 'Log'.
+Which players have a deck with a Rocket card?
+SELECT DISTINCT p.player_name
+FROM Player p
+JOIN PlayerDeck pd ON p.player_id = pd.player_id
+JOIN DeckCard dc ON pd.deck_id = dc.deck_id
+JOIN Card c ON dc.card_id = c.card_id
+WHERE c.card_name = 'Rocket';
+[('BobTheGreat',), ('DanaDragon',), ('FrankFireball',)]
+The players who have a deck with a Rocket card are BobTheGreat, DanaDragon, and FrankFireball.
+What is the most commonly used card type across all decks?
+SELECT card_type 
+FROM Card c
+JOIN DeckCard dc ON c.card_id = dc.card_id
+GROUP BY card_type
+ORDER BY COUNT(*) DESC
+LIMIT 1;
+[('Troop',)]
+The most commonly used card type across all decks is "Troop".
+Which are the most popular Archetypes?
+SELECT a.arch_name, COUNT(*) as count
+FROM Archetype a
+JOIN Deck d ON a.arch_id = d.arch_id
+GROUP BY a.arch_id
+ORDER BY count DESC;
+[('Splashyard', 1), ('Log Bait', 1), ('Hog Cycle', 1), ('LavaLoon', 1)]
+The most popular archetypes are Splashyard, Log Bait, Hog Cycle, and LavaLoon.
+Which players have multiple decks?
+SELECT p.player_name
+FROM Player p
+JOIN PlayerDeck pd ON p.player_id = pd.player_id
+GROUP BY p.player_id
+HAVING COUNT(DISTINCT pd.deck_id) > 1;
+[('AliceWonder',), ('BobTheGreat',), ('DanaDragon',), ('FrankFireball',)]
+The players who have multiple decks are AliceWonder, BobTheGreat, DanaDragon, and FrankFireball.
+Which cards are used in the most decks?
+SELECT c.card_name
+FROM Card c
+JOIN DeckCard dc ON c.card_id = dc.card_id
+GROUP BY c.card_id
+ORDER BY COUNT(dc.deck_id) DESC
+LIMIT 1;
+[('Log',)]
+The card that is used in the most decks is the Log.
+Which players have a deck that contains a Hog Rider?
+SELECT DISTINCT p.player_name
+FROM Player p
+JOIN PlayerDeck pd ON p.player_id = pd.player_id
+JOIN DeckCard dc ON pd.deck_id = dc.deck_id
+JOIN Card c ON dc.card_id = c.card_id
+WHERE c.card_name = 'Hog Rider';
+[('AliceWonder',), ('BobTheGreat',), ('EveElite',), ('FrankFireball',)]
+The players who have a deck that contains a Hog Rider are AliceWonder, BobTheGreat, EveElite, and FrankFireball.
+Which Archetypes use the Balloon card?
+SELECT DISTINCT a.arch_name
+FROM Archetype a
+JOIN Deck d ON a.arch_id = d.arch_id
+JOIN DeckCard dc ON d.deck_id = dc.deck_id
+JOIN Card c ON dc.card_id = c.card_id
+WHERE c.card_name = 'Balloon';
+[('LavaLoon',)]
+The archetype that uses the Balloon card is LavaLoon.
+What are the namesof the players who use Log Bait decks?
+SELECT DISTINCT p.player_name
+FROM Player p
+JOIN PlayerDeck pd ON p.player_id = pd.player_id
+JOIN Deck d ON pd.deck_id = d.deck_id
+JOIN Archetype a ON d.arch_id = a.arch_id
+WHERE a.arch_name = 'Log Bait';
+[('BobTheGreat',), ('DanaDragon',), ('FrankFireball',)]
+The players who use Log Bait decks are BobTheGreat, DanaDragon, and FrankFireball.
+Which players have decks with a Lava Hound?
+SELECT DISTINCT p.player_name
+FROM Player p
+JOIN PlayerDeck pd ON p.player_id = pd.player_id
+JOIN DeckCard dc ON pd.deck_id = dc.deck_id
+JOIN Card c ON dc.card_id = c.card_id
+WHERE c.card_name = 'Lava Hound';
+[('AliceWonder',), ('CharlieClash',), ('FrankFireball',)]
+The players who have decks with a Lava Hound are AliceWonder, CharlieClash, and FrankFireball.
+Who has a deck with a card that costs more than 6 elixir?
+SELECT DISTINCT p.player_name
+FROM Player p
+JOIN PlayerDeck pd ON p.player_id = pd.player_id
+JOIN DeckCard dc ON pd.deck_id = dc.deck_id
+JOIN Card c ON dc.card_id = c.card_id
+WHERE c.card_cost > 6;
+[('AliceWonder',), ('CharlieClash',), ('FrankFireball',)]
+AliceWonder, CharlieClash, and FrankFireball all have a deck with a card that costs more than 6 elixir.
+What cards are used in the highest number of decks in the database?
+SELECT c.card_name
+FROM Card c
+JOIN DeckCard dc ON c.card_id = dc.card_id
+GROUP BY c.card_id
+ORDER BY COUNT(dc.deck_id) DESC
+LIMIT 1;
+[('Log',)]
+The card that is used in the highest number of decks in the database is "Log".
+Which players have a deck with a Rocket card?
+SELECT DISTINCT p.player_name
+FROM Player p
+JOIN PlayerDeck pd ON p.player_id = pd.player_id
+JOIN DeckCard dc ON pd.deck_id = dc.deck_id
+JOIN Card c ON dc.card_id = c.card_id
+WHERE c.card_name = 'Rocket';
+[('BobTheGreat',), ('DanaDragon',), ('FrankFireball',)]
+The players who have a deck with a Rocket card are BobTheGreat, DanaDragon, and FrankFireball.
+What is the most commonly used card type across all decks?
+SELECT card_type
+FROM Card c
+JOIN DeckCard dc ON c.card_id = dc.card_id
+GROUP BY card_type
+ORDER BY COUNT(*) DESC
+LIMIT 1;
+[('Troop',)]
+The most commonly used card type across all decks is "Troop".
+Done!
