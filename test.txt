@@ -1,0 +1,3 @@
+Running db_bot.py!
+C:\Users\Johnathan\Desktop\cs\452\byu-cs-452-class-content\aisql\config.json
+Which are the most popular Archetypes?
